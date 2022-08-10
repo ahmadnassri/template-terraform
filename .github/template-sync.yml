@@ -1,5 +1,5 @@
 additional:
-  # - "terraform-*"
+  - "terraform-*"
 
 files:
   - "!README.md"
