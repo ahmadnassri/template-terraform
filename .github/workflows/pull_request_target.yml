@@ -16,6 +16,7 @@ jobs:
 
     outputs:
       repository_is_template: ${{ steps.metadata.outputs.repository_is_template }}
+      repository_default_branch: ${{ steps.metadata.outputs.repository_default_branch }}
 
     steps:
       - uses: actions/checkout@v3.0.2
@@ -62,8 +63,6 @@ jobs:
   terraform-plan:
     needs:
       - metadata
-      - commit-lint
-      - super-linter
 
     # only runs on non main branch for non template repos
     if: |
