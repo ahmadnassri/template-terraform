@@ -1,8 +1,8 @@
 version: 2.0
 
-id: template-template
+id: template-terraform
 
 about:
-  title: Template for templates
-  description: A template for GitHub Template Repositories!
-  repository: ahmadnassri/template-template
+  title: Terraform Template
+  description: terraform project template
+  repository: ahmadnassri/template-terraform
