@@ -1,0 +1,20 @@
+services:
+  # ---- super-linter ---- #
+  lint:
+    image: github/super-linter:slim-v4
+    volumes:
+      - ./:/workspace
+    environment:
+      LOG_LEVEL: 'ERROR'
+      RUN_LOCAL: 'true'
+      MULTI_STATUS: 'false'
+      IGNORE_GITIGNORED_FILES: 'true'
+      DEFAULT_WORKSPACE: /workspace
+      FILTER_REGEX_EXCLUDE: '/workspace/README.md'
+
+  # ---- readme generator ---- #
+  readme:
+    image: pandoc/core:2.13
+    volumes:
+      - ./:/data
+    command: --defaults=.pandoc.yml
