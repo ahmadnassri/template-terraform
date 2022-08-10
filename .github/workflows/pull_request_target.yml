@@ -68,7 +68,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.0.2
 
       - uses: hashicorp/setup-terraform@v1.3.2
         with:
