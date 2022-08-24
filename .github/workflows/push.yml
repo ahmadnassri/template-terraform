@@ -34,30 +34,34 @@ jobs:
         with:
           config: .github/linters/.commit-lint.yml
 
-  super-linter:
+  mega-linter:
     timeout-minutes: 5
 
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3.0.2
-        with:
-          fetch-depth: 0
 
-      - uses: github/super-linter/slim@v4
+      - uses: oxsecurity/megalinter/flavors/terraform@v6
         env:
-          LOG_LEVEL: ERROR
-          VALIDATE_JSCPD: 'false'
-          VALIDATE_ALL_CODEBASE: 'false'
-          IGNORE_GITIGNORED_FILES: 'true'
-          FILTER_REGEX_EXCLUDE: '/github/workspace/README.md'
           GITHUB_TOKEN: ${{ github.token }}
+          MEGALINTER_CONFIG: .github/linters/.mega-linter.yml
+          GITHUB_COMMENT_REPORTER: true
+          GITHUB_STATUS_REPORTER: true
+
+      - uses: actions/upload-artifact@v2
+        if: ${{ success() }} || ${{ failure() }}
+        with:
+          name: mega-linter-reports
+          path: |
+            megalinter-reports
+            mega-linter.log
 
   terraform-plan:
     needs:
       - metadata
       - commit-lint
-      - super-linter
+      - mega-linter
 
     # only runs on non main branch for non template repos
     if: |
@@ -102,17 +106,18 @@ jobs:
       # generate json output
       - run: terraform show -json terraform.plan > terraform.json
 
-      - uses: ahmadnassri/action-terraform-report@v2
+      - uses: ahmadnassri/action-terraform-report@v3
         with:
           # tell the action the plan outputs
           terraform-text: ${{ github.workspace }}/terraform.text
           terraform-json: ${{ github.workspace }}/terraform.json
+          remove-stale-reports: true
 
   terraform-apply:
     needs:
       - metadata
       - commit-lint
-      - super-linter
+      - mega-linter
 
     # only runs on main branch for non template repos
     if: |
@@ -166,7 +171,7 @@ jobs:
     needs:
       - metadata
       - commit-lint
-      - super-linter
+      - mega-linter
 
     # only runs on main branch for template repos
     if: |
