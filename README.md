@@ -2,10 +2,6 @@
 
 terraform project template
 
-[![license][license-img]][license-url]
-[![release][release-img]][release-url]
-[![semantic][semantic-img]][semantic-url]
-
 ## Usage
 
 #### GitHub Templates
@@ -37,12 +33,3 @@ use [Docker Compose][] to run tasks locally:
 ----
 > Author: [Ahmad Nassri](https://www.ahmadnassri.com/) &bull;
 > Twitter: [@AhmadNassri](https://twitter.com/AhmadNassri)
-
-[license-url]: LICENSE
-[license-img]: https://badgen.net/github/license/ahmadnassri/template-terraform
-
-[release-url]: https://github.com/ahmadnassri/template-terraform/releases
-[release-img]: https://badgen.net/github/release/ahmadnassri/template-terraform
-
-[semantic-url]: https://github.com/ahmadnassri/template-terraform/actions?query=workflow%3Arelease
-[semantic-img]: https://badgen.net/badge/📦/semantically%20released/blue
