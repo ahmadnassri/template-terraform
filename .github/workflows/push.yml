@@ -8,6 +8,9 @@ on:
 
 name: push
 
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+
 jobs:
   metadata:
     runs-on: ubuntu-latest
@@ -49,7 +52,7 @@ jobs:
           GITHUB_COMMENT_REPORTER: true
           GITHUB_STATUS_REPORTER: true
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: ${{ success() }} || ${{ failure() }}
         with:
           name: mega-linter-reports
@@ -166,7 +169,7 @@ jobs:
           TF_VAR_SECRET_ROTATION: ${{ secrets.SECRET_ROTATION }}
 
   template-sync:
-    timeout-minutes: 20
+    timeout-minutes: 5
 
     needs:
       - metadata
@@ -181,8 +184,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: ahmadnassri/action-workflow-queue@v1.1
-
       - uses: actions/checkout@v3.0.2
 
       - uses: ahmadnassri/action-template-repository-sync@v2
