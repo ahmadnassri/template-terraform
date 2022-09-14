@@ -1,10 +1,11 @@
-# ------------------------------------------------- #
-# Note: this file originates in template-terrraform #
-# ------------------------------------------------- #
+# ------------------------------------------------ #
+# Note: this file originates in template-terraform #
+# ------------------------------------------------ #
 
 services:
   # ---- mega-linter ---- #
   lint:
+    profiles: ["dev"]
     image: oxsecurity/megalinter-terraform:v6
     volumes:
       - ./:/tmp/lint
@@ -12,6 +13,23 @@ services:
       MEGALINTER_CONFIG: .github/linters/.mega-linter.yml
       REPORT_OUTPUT_FOLDER: none
       VALIDATE_ALL_CODEBASE: true
+
+  # ---- main container ---- #
+  terraform:
+    profiles: ["app"]
+    image: hashicorp/terraform:1.2.9
+    working_dir: /usr/src/terraform
+    entrypoint: terraform
+    tty: true
+    volumes:
+      - ./:/usr/src/terraform
+    environment:
+      - TF_VAR_TF_TOKEN
+      - TF_VAR_GH_TOKEN
+      - TF_VAR_NPM_TOKEN
+      - TF_VAR_DOCKER_TOKEN
+      - TF_VAR_SECRET_ROTATION
+      - TF_TOKEN_app_terraform_io=${TF_TOKEN}
 
   # ---- readme generator ---- #
   readme:

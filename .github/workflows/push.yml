@@ -4,6 +4,7 @@
 
 on:
   - push
+  - pull_request
   - workflow_dispatch
 
 name: push
@@ -16,16 +17,26 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
+      terraform_is_changed: ${{ steps.changed-files.outputs.changed }}
       repository_is_template: ${{ steps.metadata.outputs.repository_is_template }}
       repository_default_branch: ${{ steps.metadata.outputs.repository_default_branch }}
 
     steps:
       - uses: actions/checkout@v3.0.2
+        with:
+          fetch-depth: 0
 
       - id: metadata
         uses: ahmadnassri/action-metadata@v2.1.1
 
+      - id: changed-files
+        uses: ahmadnassri/action-changed-files@v1.0.1
+        with:
+          pathspec: "*.tf* **/*.tf* *.hcl"
+
   commit-lint:
+    if: github.event_name != 'pull_request'
+
     timeout-minutes: 5
 
     runs-on: ubuntu-latest
@@ -38,6 +49,8 @@ jobs:
           config: .github/linters/.commit-lint.yml
 
   mega-linter:
+    if: github.event_name != 'pull_request'
+
     timeout-minutes: 5
 
     runs-on: ubuntu-latest
@@ -63,11 +76,11 @@ jobs:
   terraform-plan:
     needs:
       - metadata
-      - commit-lint
-      - mega-linter
 
-    # only runs on non main branch for non template repos
+    # only runs on non main branch for non template repos, when terraform files have changed
     if: |
+      github.event_name == 'pull_request' &&
+      needs.metadata.outputs.terraform_is_changed == 'true' &&
       needs.metadata.outputs.repository_is_template == 'false' &&
       needs.metadata.outputs.repository_default_branch != github.ref_name
 
@@ -75,8 +88,8 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    env:
-      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+
 
     steps:
       - uses: actions/checkout@v3.0.2
@@ -97,6 +110,7 @@ jobs:
       - run: terraform fmt -check module
       - run: terraform plan -lock=false -out terraform.plan
         env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           TF_VAR_TF_TOKEN: ${{ secrets.TF_TOKEN }}
           TF_VAR_GH_TOKEN: ${{ secrets.GH_TOKEN }}
           TF_VAR_NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -122,8 +136,10 @@ jobs:
       - commit-lint
       - mega-linter
 
-    # only runs on main branch for non template repos
+    # only runs on main branch for non template repos, when terraform files have changed
     if: |
+      github.event_name != 'pull_request' &&
+      needs.metadata.outputs.terraform_is_changed == 'true' &&
       needs.metadata.outputs.repository_is_template == 'false' &&
       needs.metadata.outputs.repository_default_branch == github.ref_name
 
@@ -131,8 +147,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    env:
-      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
 
     steps:
       - name: check state
@@ -162,6 +177,7 @@ jobs:
       # execute plan
       - run: terraform apply -auto-approve
         env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           TF_VAR_TF_TOKEN: ${{ secrets.TF_TOKEN }}
           TF_VAR_GH_TOKEN: ${{ secrets.GH_TOKEN }}
           TF_VAR_NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -169,7 +185,7 @@ jobs:
           TF_VAR_SECRET_ROTATION: ${{ secrets.SECRET_ROTATION }}
 
   template-sync:
-    timeout-minutes: 5
+
 
     needs:
       - metadata
@@ -178,8 +194,11 @@ jobs:
 
     # only runs on main branch for template repos
     if: |
+      github.event_name != 'pull_request' &&
       needs.metadata.outputs.repository_is_template == 'true' &&
       needs.metadata.outputs.repository_default_branch == github.ref_name
+
+    timeout-minutes: 5
 
     runs-on: ubuntu-latest
 
