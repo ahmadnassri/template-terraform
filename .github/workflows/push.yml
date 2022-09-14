@@ -88,9 +88,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-
-
-
     steps:
       - uses: actions/checkout@v3.0.2
 
@@ -147,8 +144,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-
-
     steps:
       - name: check state
         run: |
@@ -185,8 +180,6 @@ jobs:
           TF_VAR_SECRET_ROTATION: ${{ secrets.SECRET_ROTATION }}
 
   template-sync:
-
-
     needs:
       - metadata
       - commit-lint
