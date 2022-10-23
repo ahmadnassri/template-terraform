@@ -27,7 +27,7 @@ jobs:
           fetch-depth: 0
 
       - id: metadata
-        uses: ahmadnassri/action-metadata@v2.1.1
+        uses: ahmadnassri/action-metadata@v2.1.2
 
       - id: changed-files
         uses: ahmadnassri/action-changed-files@v1.0.1
