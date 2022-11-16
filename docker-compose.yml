@@ -6,7 +6,7 @@ services:
   # ---- mega-linter ---- #
   lint:
     profiles: ["dev"]
-    image: oxsecurity/megalinter-terraform:v6
+    image: oxsecurity/megalinter-terraform:v6.14.0
     volumes:
       - ./:/tmp/lint
     environment:
@@ -23,13 +23,18 @@ services:
     tty: true
     volumes:
       - ./:/usr/src/terraform
+      - ${GOOGLE_CREDENTIALS}:${GOOGLE_CREDENTIALS}
     environment:
-      - TF_VAR_TF_TOKEN
+      - GITHUB_TOKEN
+      - GOOGLE_CREDENTIALS
+      - CLOUDFLARE_API_TOKEN
+      - CLOUDFLARE_API_USER_SERVICE_KEY
+      - TF_TOKEN_app_terraform_io=${TF_TOKEN}
+
       - TF_VAR_GH_TOKEN
       - TF_VAR_NPM_TOKEN
       - TF_VAR_DOCKER_TOKEN
       - TF_VAR_SECRET_ROTATION
-      - TF_TOKEN_app_terraform_io=${TF_TOKEN}
 
   # ---- readme generator ---- #
   readme:
