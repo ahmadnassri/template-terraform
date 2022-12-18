@@ -31,6 +31,7 @@ services:
       - CLOUDFLARE_API_USER_SERVICE_KEY
       - TF_TOKEN_app_terraform_io=${TF_TOKEN}
 
+      - TF_VAR_TF_TOKEN
       - TF_VAR_GH_TOKEN
       - TF_VAR_NPM_TOKEN
       - TF_VAR_DOCKER_TOKEN
