@@ -6,3 +6,5 @@ files:
   - "!docs/README.md"
   - "!colophon.yml"
   - "!**/template-sync.yml"
+  - "!.github/dependabot.yml"
+  - .github/dependabot-template.yml: .github/dependabot.yml
