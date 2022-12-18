@@ -2,8 +2,15 @@
 # Note: this file originates in template-template #
 # ----------------------------------------------- #
 
+DISABLE:
+  - COPYPASTE
+
 DISABLE_LINTERS:
+  - REPOSITORY_TRIVY
   - SPELL_CSPELL
+  - JSON_PRETTIER
+  - YAML_PRETTIER
+  - JAVASCRIPT_PRETTIER
 
 LOG_LEVEL: INFO
 PRINT_ALPACA: false
