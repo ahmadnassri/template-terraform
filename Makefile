@@ -24,7 +24,7 @@ validate: ## validate your changes
 	@docker compose run --rm terraform validate
 
 unlock: ## force unlock remote state
-	@docker compose run --rm terraform force-unlock hashtagpaid/github
+	@docker compose run --rm terraform force-unlock ahmadnassri/github
 
 plan: ## show terraform plan
 	@docker compose run --rm terraform plan -refresh=false -lock=false
