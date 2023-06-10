@@ -13,6 +13,9 @@ lint: ## run mega-linter
 init: ## init terraform & install plugins
 	@docker compose run --rm terraform init
 
+upgrade: ## upgrade terraform provider
+	@docker compose run --rm terraform init -upgrade
+
 refresh: ## refresh state
 	@docker compose run --rm terraform refresh
 
