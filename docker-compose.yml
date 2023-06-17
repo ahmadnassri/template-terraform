@@ -31,11 +31,11 @@ services:
       - CLOUDFLARE_API_USER_SERVICE_KEY
       - TF_TOKEN_app_terraform_io=${TF_TOKEN}
 
-      - TF_VAR_TF_TOKEN
-      - TF_VAR_GH_TOKEN
-      - TF_VAR_NPM_TOKEN
-      - TF_VAR_DOCKER_TOKEN
-      - TF_VAR_SECRET_ROTATION
+      - TF_VAR_SHARED_TF_TOKEN
+      - TF_VAR_SHARED_GH_TOKEN
+      - TF_VAR_SHARED_NPM_TOKEN
+      - TF_VAR_SHARED_DOCKER_TOKEN
+      - TF_VAR_SHARED_TOKEN_ROTATION
 
   # ---- readme generator ---- #
   readme:

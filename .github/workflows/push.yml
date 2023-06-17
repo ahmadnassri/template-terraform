@@ -34,7 +34,7 @@ jobs:
       - id: changed-files
         uses: ahmadnassri/action-changed-files@v1.0.3
         with:
-          pathspec: "*.tf* **/*.tf* *.hcl"
+          pathspec: "*.tf *.hcl data.yml"
 
   commit-lint:
     if: github.event_name != 'pull_request'
@@ -110,11 +110,11 @@ jobs:
       - run: terraform plan -lock=false -out terraform.plan
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          TF_VAR_TF_TOKEN: ${{ secrets.TF_TOKEN }}
-          TF_VAR_GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          TF_VAR_NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          TF_VAR_DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-          TF_VAR_SECRET_ROTATION: ${{ secrets.SECRET_ROTATION }}
+          TF_VAR_SHARED_TF_TOKEN: ${{ secrets.TF_TOKEN }}
+          TF_VAR_SHARED_GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          TF_VAR_SHARED_NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          TF_VAR_SHARED_DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+          TF_VAR_SHARED_TOKEN_ROTATION: ${{ secrets.TOKEN_ROTATION }}
 
       # generate plain output
       - run: terraform show -no-color terraform.plan > terraform.text
