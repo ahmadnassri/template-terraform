@@ -32,7 +32,7 @@ jobs:
         uses: ahmadnassri/action-metadata@v2.1.2
 
       - id: changed-files
-        uses: ahmadnassri/action-changed-files@v1.0.3
+        uses: ahmadnassri/action-changed-files@v1.0.4
         with:
           pathspec: "*.tf *.hcl data.yml"
 
