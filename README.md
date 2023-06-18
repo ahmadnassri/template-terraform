@@ -14,10 +14,22 @@ terraform project template
 
 ## Local Automation
 
-use [Docker Compose][] to run tasks locally:
-
--   `docker compose run readme` to regenerate `README.md`
--   `docker compose run lint` to execute [super-linter][] locally
+| command      | description                                        |
+|--------------|----------------------------------------------------|
+| pull         | pull latest containers                             |
+| lint         | run mega-linter                                    |
+| init         | init terraform & install plugins                   |
+| upgrade      | upgrade terraform provider                         |
+| refresh      | refresh state                                      |
+| format       | clean up terraform file                            |
+| validate     | validate your changes                              |
+| unlock       | force unlock remote state                          |
+| plan         | show terraform plan                                |
+| apply        | apply terraform changes                            |
+| apply-target | apply terraform changes to specific target         |
+| shell        | start the container shell                          |
+| clean        | remove running containers, volumes & anything else |
+| help         | display this help                                  |
 
 > **Note:**  
 > Your main `README.md` file is in `docs/README.md`, the file at root is generated using [pandoc][] using the provided [template][].
@@ -25,8 +37,6 @@ use [Docker Compose][] to run tasks locally:
 > You should run `docker compose run readme` after any change to `docs/README.md` and before commit / push
 
   [`@ahmadnassri/action-template-repository-sync`]: https://github.com/ahmadnassri/action-template-repository-sync
-  [Docker Compose]: https://docs.docker.com/compose/
-  [super-linter]: https://github.com/github/super-linter
   [pandoc]: https://pandoc.org/
   [template]: ./docs/README.template
 

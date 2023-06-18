@@ -10,6 +10,9 @@ pull: ## pull latest containers
 lint: ## run mega-linter
 	@docker compose run --rm lint
 
+readme: ## run readme action
+	@docker compose run --rm readme
+
 init: ## init terraform & install plugins
 	@docker compose run --rm terraform init
 
@@ -35,7 +38,7 @@ plan: ## show terraform plan
 apply: ## apply terraform changes
 	@docker compose run --rm terraform apply
 
-apply-target: ## apply terraform changes
+apply-target: ## apply terraform changes to specific target
 	@docker compose run --rm terraform apply -target='$(filter-out $@, $(MAKECMDGOALS))'
 
 shell: ## start the container shell
