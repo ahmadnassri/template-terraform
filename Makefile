@@ -35,11 +35,17 @@ plan: ## show terraform plan
 apply: ## apply terraform changes
 	@docker compose run --rm terraform apply
 
+apply-target: ## apply terraform changes
+	@docker compose run --rm terraform apply -target='$(filter-out $@, $(MAKECMDGOALS))'
+
 shell: ## start the container shell
 	@docker compose run --rm --entrypoint /bin/sh terraform
 
 clean: ## remove running containers, volumes & anything else
 	@docker compose rm --stop --volumes --force
+
+%:
+	@true
 
 # Utility methods
 ## Help: https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
