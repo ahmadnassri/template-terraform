@@ -14,12 +14,14 @@
 | ------------ | -------------------------------------------------- |
 | pull         | pull latest containers                             |
 | lint         | run mega-linter                                    |
+| readme       | run readme action                                  |
 | init         | init terraform & install plugins                   |
 | upgrade      | upgrade terraform provider                         |
 | refresh      | refresh state                                      |
 | format       | clean up terraform file                            |
 | validate     | validate your changes                              |
 | unlock       | force unlock remote state                          |
+| list         | list terraform resources                           |
 | plan         | show terraform plan                                |
 | apply        | apply terraform changes                            |
 | apply-target | apply terraform changes to specific target         |
@@ -34,6 +36,4 @@
 
 [template]: ./docs/README.template
 [pandoc]: https://pandoc.org/
-[Docker Compose]: https://docs.docker.com/compose/
-[super-linter]: https://github.com/github/super-linter
 [`@ahmadnassri/action-template-repository-sync`]: https://github.com/ahmadnassri/action-template-repository-sync

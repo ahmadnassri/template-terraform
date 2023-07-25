@@ -28,7 +28,6 @@ services:
       - GITHUB_TOKEN
       - GOOGLE_CREDENTIALS
       - CLOUDFLARE_API_TOKEN
-      - CLOUDFLARE_API_USER_SERVICE_KEY
       - TF_TOKEN_app_terraform_io=${TF_TOKEN}
 
       - TF_VAR_SHARED_TF_TOKEN
@@ -36,6 +35,7 @@ services:
       - TF_VAR_SHARED_NPM_TOKEN
       - TF_VAR_SHARED_DOCKER_TOKEN
       - TF_VAR_SHARED_TOKEN_ROTATION
+      - TF_VAR_SHARED_CLOUDFLARE_TOKEN
 
   # ---- readme generator ---- #
   readme:
