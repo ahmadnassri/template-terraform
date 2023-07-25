@@ -30,13 +30,16 @@ validate: ## validate your changes
 	@docker compose run --rm terraform validate
 
 unlock: ## force unlock remote state
-	@docker compose run --rm terraform force-unlock ahmadnassri/github
+	@docker compose run --rm terraform force-unlock ahmadnassri/cloudflare
+
+list: ## list terraform resources
+	@docker compose run --rm terraform state show
 
 plan: ## show terraform plan
 	@docker compose run --rm terraform plan -refresh=false -lock=false
 
 apply: ## apply terraform changes
-	@docker compose run --rm terraform apply
+	@docker compose run --rm terraform apply --auto-approve
 
 apply-target: ## apply terraform changes to specific target
 	@docker compose run --rm terraform apply -target='$(filter-out $@, $(MAKECMDGOALS))'
