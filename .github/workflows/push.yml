@@ -1,13 +1,12 @@
-# ------------------------------------------------ #
-# Note: this file originates in template-terraform #
-# ------------------------------------------------ #
+# ----------------------------------------------- #
+# Note: this file originates in template-template #
+# ----------------------------------------------- #
+
+name: push
 
 on:
   - push
-  - pull_request
   - workflow_dispatch
-
-name: push
 
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
@@ -16,192 +15,27 @@ permissions: read-all
 
 jobs:
   metadata:
-    runs-on: ubuntu-latest
+    uses: ahmadnassri/actions/.github/workflows/metadata.yml@master
 
-    outputs:
-      terraform_is_changed: ${{ steps.changed-files.outputs.changed }}
-      repository_is_template: ${{ steps.metadata.outputs.repository_is_template }}
-      repository_default_branch: ${{ steps.metadata.outputs.repository_default_branch }}
+  lint-commits:
+    uses: ahmadnassri/actions/.github/workflows/lint-commits.yml@master
 
-    steps:
-      - uses: actions/checkout@v3.5.3
-        with:
-          fetch-depth: 0
+  lint-content:
+    uses: ahmadnassri/actions/.github/workflows/lint-documentation.yml@master
 
-      - id: metadata
-        uses: ahmadnassri/action-metadata@v2.1.2
-
-      - id: changed-files
-        uses: ahmadnassri/action-changed-files@v1.0.4
-        with:
-          pathspec: "*.tf *.hcl data.yml"
-
-  commit-lint:
-    if: github.event_name != 'pull_request'
-
-    timeout-minutes: 5
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3.5.3
-
-      - uses: ahmadnassri/action-commit-lint@v2.1.9
-        with:
-          config: .github/linters/.commit-lint.yml
-
-  mega-linter:
-    if: github.event_name != 'pull_request'
-
-    timeout-minutes: 5
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3.5.3
-
-      - uses: oxsecurity/megalinter/flavors/terraform@v7.2.1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          MEGALINTER_CONFIG: .github/linters/.mega-linter.yml
-          GITHUB_COMMENT_REPORTER: true
-          GITHUB_STATUS_REPORTER: true
-
-      - uses: actions/upload-artifact@v3
-        if: ${{ success() }} || ${{ failure() }}
-        with:
-          name: mega-linter-reports
-          path: |
-            megalinter-reports
-            mega-linter.log
-
-  terraform-plan:
-    needs:
-      - metadata
-
-    # only runs on non main branch for non template repos, when terraform files have changed
-    if: |
-      github.event_name == 'pull_request' &&
-      needs.metadata.outputs.terraform_is_changed == 'true' &&
-      needs.metadata.outputs.repository_is_template == 'false' &&
-      needs.metadata.outputs.repository_default_branch != github.ref_name
-
-    timeout-minutes: 30
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3.5.3
-
-      - uses: hashicorp/setup-terraform@v2.0.3
-        with:
-          terraform_wrapper: false
-          cli_config_credentials_token: ${{ secrets.TF_TOKEN }}
-
-      - uses: actions/cache@v3.3.1
-        with:
-          key: terraform-cache-${{ hashFiles('.terraform.lock.hcl') }}
-          path: .terraform
-
-      - run: terraform init
-      - run: terraform validate
-      - run: terraform fmt -check
-      - run: terraform fmt -check module
-      - run: terraform plan -lock=false -out terraform.plan
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          TF_VAR_SHARED_TF_TOKEN: ${{ secrets.TF_TOKEN }}
-          TF_VAR_SHARED_GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          TF_VAR_SHARED_NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          TF_VAR_SHARED_DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-          TF_VAR_SHARED_TOKEN_ROTATION: ${{ secrets.TOKEN_ROTATION }}
-          TF_VAR_SHARED_CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
-
-      # generate plain output
-      - run: terraform show -no-color terraform.plan > terraform.text
-
-      # generate json output
-      - run: terraform show -json terraform.plan > terraform.json
-
-      - uses: ahmadnassri/action-terraform-report@v3
-        with:
-          # tell the action the plan outputs
-          terraform-text: ${{ github.workspace }}/terraform.text
-          terraform-json: ${{ github.workspace }}/terraform.json
-          remove-stale-reports: true
-
-  terraform-apply:
-    needs:
-      - metadata
-      - commit-lint
-      - mega-linter
-
-    # only runs on main branch for non template repos, when terraform files have changed
-    if: |
-      github.event_name != 'pull_request' &&
-      needs.metadata.outputs.terraform_is_changed == 'true' &&
-      needs.metadata.outputs.repository_is_template == 'false' &&
-      needs.metadata.outputs.repository_default_branch == github.ref_name
-
-    timeout-minutes: 30
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: check state
-        run: |
-          LOCKED=$(curl -s https://app.terraform.io/api/v2/organizations/${{ github.repository_owner }}/workspaces/github -H "Authorization: Bearer ${{ secrets.TF_TOKEN }}" | jq -r '.data.attributes.locked')
-          if [[ $LOCKED == "true" ]]; then
-            echo "::error::state is locked"
-            exit 1
-          fi
-
-      - uses: actions/checkout@v3.5.3
-
-      - uses: hashicorp/setup-terraform@v2.0.3
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_TOKEN }}
-
-      # cache terraform plugins
-      - uses: actions/cache@v3.3.1
-        id: terraform-cache
-        with:
-          key: terraform-cache-${{ hashFiles('.terraform.lock.hcl') }}
-          path: .terraform
-
-      # install plugins
-      - run: terraform init
-
-      # execute plan
-      - run: terraform apply -auto-approve
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          TF_VAR_SHARED_TF_TOKEN: ${{ secrets.TF_TOKEN }}
-          TF_VAR_SHARED_GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          TF_VAR_SHARED_NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          TF_VAR_SHARED_DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-          TF_VAR_SHARED_TOKEN_ROTATION: ${{ secrets.TOKEN_ROTATION }}
-          TF_VAR_SHARED_CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+    permissions:
+      contents: write
+      statuses: write
+      pull-requests: write
 
   template-sync:
     needs:
       - metadata
-      - commit-lint
-      - mega-linter
+      - lint-commits
+      - lint-content
 
-    # only runs on main branch for template repos
-    if: |
-      github.event_name != 'pull_request' &&
-      needs.metadata.outputs.repository_is_template == 'true' &&
-      needs.metadata.outputs.repository_default_branch == github.ref_name
+    secrets: inherit
 
-    timeout-minutes: 5
+    if: ${{ needs.metadata.outputs.repository_default_branch == github.ref_name }}
 
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3.5.3
-
-      - uses: ahmadnassri/action-template-repository-sync@v2.4.6
-        with:
-          github-token: ${{ secrets.GH_TOKEN }}
+    uses: ahmadnassri/actions/.github/workflows/template-sync.yml@master
