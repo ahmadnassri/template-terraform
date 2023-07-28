@@ -4,6 +4,8 @@
 # Note: this file originates in template-terraform #
 # ------------------------------------------------ #
 
+PROJECT := $(shell jq -r '(.backend.config.organization + "/" + .backend.config.workspaces.name)' < .terraform/terraform.tfstate)
+
 pull: ## pull latest containers
 	@docker compose pull
 
@@ -30,7 +32,7 @@ validate: ## validate your changes
 	@docker compose run --rm terraform validate
 
 unlock: ## force unlock remote state
-	@docker compose run --rm terraform force-unlock ahmadnassri/cloudflare
+	@docker compose run --rm terraform force-unlock ${PROJECT}
 
 list: ## list terraform resources
 	@docker compose run --rm terraform state show
