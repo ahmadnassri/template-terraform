@@ -12,23 +12,6 @@ concurrency:
 permissions: read-all
 
 jobs:
-<<<<<<< HEAD
-=======
-  metadata:
-    uses: ahmadnassri/actions/.github/workflows/metadata.yml@master
-
-  template-sync:
-    needs: metadata
-    secrets: inherit
-
-    if: ${{ needs.metadata.outputs.repository_is_template == 'true' }}
-
-    uses: ahmadnassri/actions/.github/workflows/template-sync.yml@master
-    with:
-      repository_is_template: ${{ needs.metadata.outputs.repository_is_template }}
-      repository_default_branch: ${{ needs.metadata.outputs.repository_default_branch }}
-
->>>>>>> aae8223 (ci: correct variable name)
   auto-merge:
     needs: template-sync
     secrets: inherit
