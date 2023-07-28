@@ -6,7 +6,6 @@ name: push
 
 on:
   - push
-  - pull_request
   - workflow_dispatch
 
 concurrency:
@@ -28,6 +27,11 @@ jobs:
 
   lint-content:
     uses: ahmadnassri/actions/.github/workflows/lint-terraform.yml@master
+
+    permissions:
+      contents: write
+      statuses: write
+      pull-requests: write
 
   terraform-apply:
     needs:
