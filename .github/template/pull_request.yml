@@ -12,3 +12,5 @@ jobs:
   main:
     uses: ahmadnassri/actions/.github/workflows/pull-request-terraform.yml@master
     secrets: inherit
+    permissions:
+      pull-requests: write
