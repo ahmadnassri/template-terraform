@@ -26,7 +26,6 @@ refresh: ## refresh state
 
 format: ## clean up terraform file
 	@docker compose run --rm terraform fmt
-	@docker compose run --rm terraform fmt module
 
 validate: ## validate your changes
 	@docker compose run --rm terraform validate
