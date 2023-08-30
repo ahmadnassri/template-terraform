@@ -25,11 +25,13 @@ services:
       - ./:/usr/src/terraform
       - ${GOOGLE_CREDENTIALS}:${GOOGLE_CREDENTIALS}
     environment:
+      # provider variables
       - GOOGLE_CREDENTIALS
       - GITHUB_TOKEN=${TF_VAR_TOKEN_GITHUB}
       - CLOUDFLARE_API_TOKEN=${TF_VAR_TOKEN_CLOUDFLARE}
       - TF_TOKEN_app_terraform_io=${TOKEN_TERRAFORM}
 
+      # module variables
       - TF_VAR_TOKEN_CLOUDFLARE
       - TF_VAR_TOKEN_DOCKERHUB
       - TF_VAR_TOKEN_GITHUB
