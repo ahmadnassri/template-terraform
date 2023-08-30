@@ -1,5 +1,0 @@
-[rules]
-    skip-rules = [
-        "AC_GITHUB_0002",
-        "AC_GCP_0231"
-    ]
