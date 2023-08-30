@@ -27,8 +27,8 @@ services:
     environment:
       # provider variables
       - GOOGLE_CREDENTIALS
-      - GITHUB_TOKEN=${TF_VAR_TOKEN_GITHUB}
-      - CLOUDFLARE_API_TOKEN=${TF_VAR_TOKEN_CLOUDFLARE}
+      - GITHUB_TOKEN=${TOKEN_GITHUB}
+      - CLOUDFLARE_API_TOKEN=${TOKEN_CLOUDFLARE}
       - TF_TOKEN_app_terraform_io=${TOKEN_TERRAFORM}
 
       # module variables
