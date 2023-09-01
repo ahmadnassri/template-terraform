@@ -23,10 +23,8 @@ services:
     tty: true
     volumes:
       - ./:/usr/src/terraform
-      - ${GOOGLE_CREDENTIALS}:${GOOGLE_CREDENTIALS}
     environment:
       # provider variables
-      - GOOGLE_CREDENTIALS
       - GITHUB_TOKEN=${TOKEN_GITHUB}
       - CLOUDFLARE_API_TOKEN=${TOKEN_CLOUDFLARE}
       - TF_TOKEN_app_terraform_io=${TOKEN_TERRAFORM}
