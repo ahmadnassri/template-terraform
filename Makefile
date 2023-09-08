@@ -34,7 +34,7 @@ unlock: ## force unlock remote state
 	@docker compose run --rm terraform force-unlock ${PROJECT}
 
 list: ## list terraform resources
-	@docker compose run --rm terraform state show
+	@docker compose run --rm terraform state list
 
 plan: ## show terraform plan
 	@docker compose run --rm terraform plan -refresh=false -lock=false
