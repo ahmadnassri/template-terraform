@@ -1,6 +1,5 @@
 additional:
-  - "terraform-*"
-  - "!terraform-module-*"
+  - "terraform-github"
 
 files:
   - "!README.md"
