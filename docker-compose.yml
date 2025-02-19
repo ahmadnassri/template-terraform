@@ -30,11 +30,7 @@ services:
       - TF_TOKEN_app_terraform_io=${TOKEN_TERRAFORM}
 
       # module variables
-      - TF_VAR_TOKEN_CLOUDFLARE
-      - TF_VAR_TOKEN_DOCKERHUB
-      - TF_VAR_TOKEN_GITHUB
-      - TF_VAR_TOKEN_NPM
-      - TF_VAR_TOKEN_TERRAFORM
+      - TF_VAR_TOKEN_1PASSWORD
       - TF_VAR_TOKEN_ROTATION
 
   # ---- readme generator ---- #
